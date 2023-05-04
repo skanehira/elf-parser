@@ -59,7 +59,7 @@ pub fn parse_type(raw: &[u8]) -> IResult<&[u8], Type> {
     map(le_u16, Type::from)(raw)
 }
 
-pub fn parse_header(raw: &[u8]) -> IResult<&[u8], Header> {
+pub fn parse_elf_header(raw: &[u8]) -> IResult<&[u8], Header> {
     let (r, ident) = parse_ident(raw)?;
     let (r, ty) = parse_type(r)?;
     let (r, machine) = parse_machine(r)?;
@@ -133,8 +133,8 @@ mod tests {
     #[test]
     fn test_parse_class() {
         for (input, expected) in [
-            (b"\x01", Class::Bit32),
-            (b"\x02", Class::Bit64),
+            (b"\x01", Class::ELF32),
+            (b"\x02", Class::ELF64),
             (b"\x00", Class::None),
             (b"\x03", Class::Unknown),
         ] {
@@ -208,7 +208,7 @@ mod tests {
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // padding
             ],
             Ident {
-                class: Class::Bit64,
+                class: Class::ELF64,
                 data: Data::Lsb,
                 version: Version::Current,
                 os_abi: OsAbi::SystemV,
@@ -220,7 +220,7 @@ mod tests {
     #[test]
     fn elf_header64_test() {
         helper(
-            parse_header,
+            parse_elf_header,
             &[
                 0x7f, 0x45, 0x4c, 0x46, // magic number
                 0x02, // data
@@ -245,7 +245,7 @@ mod tests {
             ],
             Header {
                 ident: Ident {
-                    class: Class::Bit64,
+                    class: Class::ELF64,
                     data: Data::Lsb,
                     version: Version::Current,
                     os_abi: OsAbi::SystemV,

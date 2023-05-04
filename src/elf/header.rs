@@ -44,8 +44,8 @@ pub static ELF_MAGIC: &[u8; 4] = b"\x7fELF";
 #[repr(u8)]
 pub enum Class {
     None = 0x0,  // invalid class
-    Bit32 = 0x1, // 32-bit objects
-    Bit64 = 0x2, // 64-bit objects
+    ELF32 = 0x1, // 32-bit objects
+    ELF64 = 0x2, // 64-bit objects
     Unknown,
 }
 
@@ -53,8 +53,8 @@ impl From<u8> for Class {
     fn from(value: u8) -> Self {
         match value {
             0x0 => Class::None,
-            0x1 => Class::Bit32,
-            0x2 => Class::Bit64,
+            0x1 => Class::ELF32,
+            0x2 => Class::ELF64,
             _ => Class::Unknown,
         }
     }
